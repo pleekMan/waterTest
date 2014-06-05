@@ -126,51 +126,49 @@ void testApp::update(){
 		fluidDrawer.setup(&fluidSolver);
 		resizeFluid = false;
 	}
-	
-#ifdef USE_TUIO
-	tuioClient.getMessage();
-	
-	// do finger stuff
-	list<ofxTuioCursor*>cursorList = tuioClient.getTuioCursors();
-	for(list<ofxTuioCursor*>::iterator it=cursorList.begin(); it != cursorList.end(); it++) {
-		ofxTuioCursor *tcur = (*it);
-        float vx = tcur->getXSpeed() * tuioCursorSpeedMult;
-        float vy = tcur->getYSpeed() * tuioCursorSpeedMult;
-        if(vx == 0 && vy == 0) {
-            vx = ofRandom(-tuioStationaryForce, tuioStationaryForce);
-            vy = ofRandom(-tuioStationaryForce, tuioStationaryForce);
-        }
-        addToFluid(ofVec2f(tcur->getX() * tuioXScaler, tcur->getY() * tuioYScaler), ofVec2f(vx, vy), true, true);
-    }
-#endif
+    
+	/*
+     #ifdef USE_TUIO
+     tuioClient.getMessage();
+     
+     // do finger stuff
+     list<ofxTuioCursor*>cursorList = tuioClient.getTuioCursors();
+     for(list<ofxTuioCursor*>::iterator it=cursorList.begin(); it != cursorList.end(); it++) {
+     ofxTuioCursor *tcur = (*it);
+     float vx = tcur->getXSpeed() * tuioCursorSpeedMult;
+     float vy = tcur->getYSpeed() * tuioCursorSpeedMult;
+     if(vx == 0 && vy == 0) {
+     vx = ofRandom(-tuioStationaryForce, tuioStationaryForce);
+     vy = ofRandom(-tuioStationaryForce, tuioStationaryForce);
+     }
+     addToFluid(ofVec2f(tcur->getX() * tuioXScaler, tcur->getY() * tuioYScaler), ofVec2f(vx, vy), true, true);
+     }
+     #endif
+     */
     
     //----------------
     
     
     for (int i=0; i<forceParticles.size(); i++) {
         
-        ofVec2f fParticlePos = forceParticles[i].getPosition();
-        
         //ofVec2f forceAtField = getField(fParticlePos); // 0 -> 1
         //forceAtField = (forceAtField * 2) - 1; // transpose to -1 -> 1
-
-        float fAtDepth = getForceFromDepthMap(&depthMap, &(forceParticles[i]));
-        ofVec2f forceAtDepthMap = ofVec2f(0,fAtDepth);
-       
-       forceParticles[i].update(forceAtDepthMap);
         
-       
-        ofVec2f eventPos = fParticlePos;
-        ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
-        ofVec2f eventVel = forceParticles[i].getVelocity() / ofGetWindowSize();
-        addToFluid(eventNorm, eventVel, true, true);
+        ofVec2f forceAtDepthMap = ofVec2f(0, getForceFromDepthMap(&depthMap, &(forceParticles[i])) );
         
-        /*
+        forceParticles[i].update(forceAtDepthMap);
+        
+        
         ofVec2f eventPos = forceParticles[i].getPosition();
         ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
-        ofVec2f eventVel = forceParticles[i].getVelocity() / ofGetWindowSize();
+        ofVec2f eventVel = forceParticles[i].getVelocity() * 4 / ofGetWindowSize();
         addToFluid(eventNorm, eventVel, true, true);
-        //pMouse = eventPos;
+        
+        
+        /*
+         if(i == 100){
+         cout << "Pos: " + ofToString(eventVel) << endl;
+         }
          */
         
     }
@@ -179,25 +177,25 @@ void testApp::update(){
 	fluidSolver.update();
     
     //t += 0.05;
-
+    
 }
 
 void testApp::draw(){
-    //ofBackground(0);
-    ofSetColor(255);
-    depthMap.draw(0, 0);
-    ofSetColor(0,0,100, 10);
-    ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+    ofBackground(0);
+    //ofSetColor(255);
+    //depthMap.draw(0, 0);
+    //ofSetColor(0,0,0, 20);
+    //ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
     /*
-	if(drawFluid) {
-        ofClear(0);
-		glColor3f(1, 1, 1);
-		fluidDrawer.draw(0, 0, ofGetWidth(), ofGetHeight());
-	} else {
-        //		if(ofGetFrameNum()%5==0)
-        fadeToColor(0, 0, 0, 0.05);
-	}
-    */
+     if(drawFluid) {
+     ofClear(0);
+     glColor3f(1, 1, 1);
+     fluidDrawer.draw(0, 0, ofGetWidth(), ofGetHeight());
+     } else {
+     //		if(ofGetFrameNum()%5==0)
+     fadeToColor(0, 0, 0, 0.05);
+     }
+     */
 	if(drawParticles)
 		particleSystem.updateAndDraw(fluidSolver, ofGetWindowSize(), drawFluid);
 	
@@ -216,38 +214,10 @@ void testApp::draw(){
     for (int i=0; i<forceParticles.size(); i++) {
         forceParticles[i].render();
         
-        if(i == 10){
+        if(i == 100){
             ofFill();
             ofSetColor(0, 255, 0);
-            ofDrawBitmapString(ofToString(i) + " : " + ofToString(forceParticles[i].getPosition().y), forceParticles[i].getPosition());
-            
-           //ofDrawBitmapString(ofToString(getForceFromDepthMap(depthMap, forceParticles[i].getPosition())), forceParticles[i].getPosition() + ofVec2f(0,-10));
-            
-            /*
-            float pxBrightness = depthMap.getColor((int)forceParticles[i].getPosition().x, (int)forceParticles[i].getConstantPosY()).r; // IS WHITE, ANYWAY...
-            float bottomPxBrightness = depthMap.getColor((int)forceParticles[i].getPosition().x, (int)(forceParticles[i].getConstantPosY() + 1)).r;
-            float finalForce = pxBrightness / 255;
-            
-            //cout << "- " + ofToString((int)forceParticles[i].getPosition().x) + " . " + ofToString((int)forceParticles[i].getConstantPosY()) << endl;
-            //cout << "Px: "+ ofToString(pxBrightness) + " / Bttm Px: " + ofToString(bottomPxBrightness) + " / Diff: " + ofToString(bottomPxBrightness - pxBrightness) << endl;
-            
-            if (bottomPxBrightness - pxBrightness > 0.) {
-                finalForce *= -1;
-            }
-            
-            cout << "LastIncl: " + ofToString(forceParticles[i].getLastInclination()) << endl;
-
-            
-            //cout << "Ff: " + ofToString(finalForce) << endl;
-            //cout << "------------------------------------" << endl;
-            
-            ofRect(300, ofGetWindowHeight() * 0.5, 20, ofMap(finalForce, -1, 1, -300,300));
-            */
-            //ofDrawBitmapString(ofToString(pxBrightness) + " : " + ofToString(bottomPxBrightness), forceParticles[i].getPosition() + ofVec2f(0,-20));
-            //ofDrawBitmapString(ofToString(finalForce), forceParticles[i].getPosition() + ofVec2f(-100,-20));
-
-
-
+            ofDrawBitmapString(ofToString(i) + " : " + ofToString(forceParticles[i].getVelocity()), forceParticles[i].getPosition());
         }
     }
     
@@ -255,7 +225,7 @@ void testApp::draw(){
     
     //-------------
     
-
+    
     
 #ifdef USE_GUI
 	gui.draw();
@@ -292,7 +262,7 @@ void testApp::drawNoiseField(){
             ofVec2f coordinates = ofVec2f(x,y);
             ofVec2f force = getField(coordinates); // 0 -> 1
             ofSetColor(force.length() * 200);
-
+            
             force = (force * 2) - 1; // transpose to -1 -> 1
             
             
@@ -322,14 +292,14 @@ float testApp::getForceFromDepthMap(ofImage *depthMap, ForceParticle *fParticle)
     
     //float pxBrightness = 0.5;
     //float bottomPxBrightness = 0.5;
-
-
+    
+    
     float finalForce = pxBrightness / 255;
     
     // GET SLOPE (INCLINATION)
     int difference = bottomPxBrightness - pxBrightness;
     
-    // IF PIXELS ARE THE SAME, USE LAST INCLINATION
+    // IF PIXELS ARE THE SAME, USE LAST SLOPE
     if (difference == 0) {
         difference = (int)fParticle->getLastInclination();
     }
@@ -402,13 +372,13 @@ void testApp::keyPressed  (int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y){
-    /*
-	ofVec2f eventPos = ofVec2f(x, y);
-	ofVec2f mouseNorm = ofVec2f(eventPos) / ofGetWindowSize();
-	ofVec2f mouseVel = ofVec2f(eventPos - pMouse) / ofGetWindowSize();
-	addToFluid(mouseNorm, mouseVel, true, true);
-	pMouse = eventPos;
-     */
+    
+    ofVec2f eventPos = ofVec2f(x, y);
+    ofVec2f mouseNorm = ofVec2f(eventPos) / ofGetWindowSize();
+    ofVec2f mouseVel = ofVec2f(eventPos - pMouse) / ofGetWindowSize();
+    addToFluid(mouseNorm, mouseVel, true, true);
+    pMouse = eventPos;
+    
 }
 
 void testApp::mouseDragged(int x, int y, int button) {

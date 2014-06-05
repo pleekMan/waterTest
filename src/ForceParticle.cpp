@@ -47,8 +47,8 @@ void ForceParticle::update(ofVec2f _force){
     
     
     //vel = constantVel;
-    pos.x += constantVel.x;
-    pos.y = constantPosY.y + (_force.y * 100);
+    pos.x += constantVel.x + ofRandom(-10,10);
+    pos.y = constantPosY.y + (_force.y * 100) + ofRandom(-10,10);
     
     vel = pos - previousPos;
     

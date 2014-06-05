@@ -86,8 +86,8 @@ void Particle::updateVertexArrays( bool drawingFluid, const ofVec2f &invWindowSi
 		float satInc = mass > 0.5 ? mass * mass * mass : 0;
 		satInc *= satInc * satInc * satInc;
 		ofColor color;
-		//color.setHsb(0, v2 * 255.0f / ( VMAX * VMAX ) + satInc, ofLerp(0.5, 1, mass) * alpha * 255.0f);
-        color.set(0, 0, 255);
+		color.setHsb(0, v2 * 255.0f / ( VMAX * VMAX ) + satInc, ofLerp(0.5, 1, mass) * alpha * 255.0f);
+        //color.set(0, 0, 255);
 		
 		colBuffer[ci++] = color.r;
 		colBuffer[ci++] = color.g;

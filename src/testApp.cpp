@@ -65,7 +65,7 @@ void testApp::setup() {
     
     
     //-------------
-    int separation = 40;
+    int separation = 50;
     for (int y=0; y < ofGetWindowHeight(); y+= separation) {
         
         for (int x=0; x < ofGetWindowWidth(); x+= separation) {
@@ -79,9 +79,11 @@ void testApp::setup() {
     
     //------------ PERLIN NOISE VARS
     t = ofRandom(3);
-    complexity = 4; // NOISE SCALE
+    complexity = 3; // NOISE SCALE
     //timeSpeed = .005; // MOTION SPEED
     phase = TWO_PI; // separate u-noise from v-noise
+    
+    depthMap.loadImage("depthMap.png");
 }
 
 
@@ -144,15 +146,32 @@ void testApp::update(){
     
     //----------------
     
+    
     for (int i=0; i<forceParticles.size(); i++) {
         
-        forceParticles[i].update();
+        ofVec2f fParticlePos = forceParticles[i].getPosition();
         
+        //ofVec2f forceAtField = getField(fParticlePos); // 0 -> 1
+        //forceAtField = (forceAtField * 2) - 1; // transpose to -1 -> 1
+
+        float fAtDepth = getForceFromDepthMap(&depthMap, &(forceParticles[i]));
+        ofVec2f forceAtDepthMap = ofVec2f(0,fAtDepth);
+       
+       forceParticles[i].update(forceAtDepthMap);
+        
+       
+        ofVec2f eventPos = fParticlePos;
+        ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
+        ofVec2f eventVel = forceParticles[i].getVelocity() / ofGetWindowSize();
+        addToFluid(eventNorm, eventVel, true, true);
+        
+        /*
         ofVec2f eventPos = forceParticles[i].getPosition();
         ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
         ofVec2f eventVel = forceParticles[i].getVelocity() / ofGetWindowSize();
         addToFluid(eventNorm, eventVel, true, true);
         //pMouse = eventPos;
+         */
         
     }
     //----------------
@@ -164,7 +183,9 @@ void testApp::update(){
 }
 
 void testApp::draw(){
-    //ofBackground(127);
+    //ofBackground(0);
+    ofSetColor(255);
+    depthMap.draw(0, 0);
     ofSetColor(0,0,100, 10);
     ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
     /*
@@ -182,21 +203,58 @@ void testApp::draw(){
 	
     //	ofDrawBitmapString(sz, 50, 50);
     
+    
+    //-----------------
+    //PERLIN NOISE
+    
+    //drawNoiseField();
+    
+    //----------------
+    
     //-------------
     
     for (int i=0; i<forceParticles.size(); i++) {
         forceParticles[i].render();
+        
+        if(i == 10){
+            ofFill();
+            ofSetColor(0, 255, 0);
+            ofDrawBitmapString(ofToString(i) + " : " + ofToString(forceParticles[i].getPosition().y), forceParticles[i].getPosition());
+            
+           //ofDrawBitmapString(ofToString(getForceFromDepthMap(depthMap, forceParticles[i].getPosition())), forceParticles[i].getPosition() + ofVec2f(0,-10));
+            
+            /*
+            float pxBrightness = depthMap.getColor((int)forceParticles[i].getPosition().x, (int)forceParticles[i].getConstantPosY()).r; // IS WHITE, ANYWAY...
+            float bottomPxBrightness = depthMap.getColor((int)forceParticles[i].getPosition().x, (int)(forceParticles[i].getConstantPosY() + 1)).r;
+            float finalForce = pxBrightness / 255;
+            
+            //cout << "- " + ofToString((int)forceParticles[i].getPosition().x) + " . " + ofToString((int)forceParticles[i].getConstantPosY()) << endl;
+            //cout << "Px: "+ ofToString(pxBrightness) + " / Bttm Px: " + ofToString(bottomPxBrightness) + " / Diff: " + ofToString(bottomPxBrightness - pxBrightness) << endl;
+            
+            if (bottomPxBrightness - pxBrightness > 0.) {
+                finalForce *= -1;
+            }
+            
+            cout << "LastIncl: " + ofToString(forceParticles[i].getLastInclination()) << endl;
+
+            
+            //cout << "Ff: " + ofToString(finalForce) << endl;
+            //cout << "------------------------------------" << endl;
+            
+            ofRect(300, ofGetWindowHeight() * 0.5, 20, ofMap(finalForce, -1, 1, -300,300));
+            */
+            //ofDrawBitmapString(ofToString(pxBrightness) + " : " + ofToString(bottomPxBrightness), forceParticles[i].getPosition() + ofVec2f(0,-20));
+            //ofDrawBitmapString(ofToString(finalForce), forceParticles[i].getPosition() + ofVec2f(-100,-20));
+
+
+
+        }
     }
     
     
     
     //-------------
-    //-----------------
-    //PERLIN NOISE
-   
-    drawNoiseField();
-
-    //----------------
+    
 
     
 #ifdef USE_GUI
@@ -224,20 +282,71 @@ ofVec2f testApp::getField(ofVec2f position) {
 
 void testApp::drawNoiseField(){
     
-    ofFill();
+    ofNoFill();
     int cellSize = 20;
+    
     for (int y=0; y < ofGetWindowHeight(); y+= cellSize) {
         for (int x=0; x < ofGetWindowWidth(); x+= cellSize) {
             
-            ofVec2f coordinates = ofVec2f(x,y);
-            ofVec2f force = getField(coordinates);
             
+            ofVec2f coordinates = ofVec2f(x,y);
+            ofVec2f force = getField(coordinates); // 0 -> 1
             ofSetColor(force.length() * 200);
-            ofRect(x, y, cellSize, cellSize);
+
+            force = (force * 2) - 1; // transpose to -1 -> 1
+            
+            
+            
+            //ofColor depthMapBrightness = depthMap.getColor(x, y).getBrightness();
+            
+            //ofSetColor(depthMapBrightness);
+            ofCircle(x, y, 3);
+            ofSetColor(255);
+            ofLine(x, y, x + (force.x * 20), y + (force.y * 20));
+            
+            //ofRect(x, y, cellSize, cellSize);
             
         }
     }
     
+}
+
+float testApp::getForceFromDepthMap(ofImage *depthMap, ForceParticle *fParticle){
+    
+    int fParticleX = (int)fParticle->getPosition().x;
+    int fParticleY = (int)fParticle->getConstantPosY(); // TO ALWAYS GRAB THE SAME PIXEL.Y
+    
+    // GET BRIGHTNESS FROM PX AND THE ONE BELOW
+    float pxBrightness = depthMap->getColor(fParticleX, fParticleY).r; // IS WHITE, ANYWAY...
+    float bottomPxBrightness = depthMap->getColor(fParticleX, fParticleY + 1).r;
+    
+    //float pxBrightness = 0.5;
+    //float bottomPxBrightness = 0.5;
+
+
+    float finalForce = pxBrightness / 255;
+    
+    // GET SLOPE (INCLINATION)
+    int difference = bottomPxBrightness - pxBrightness;
+    
+    // IF PIXELS ARE THE SAME, USE LAST INCLINATION
+    if (difference == 0) {
+        difference = (int)fParticle->getLastInclination();
+    }
+    
+    // CORRECT DIRECTION OF SLOPE
+    if (difference > 0.) {
+        finalForce *= -1;
+    }
+    
+    // UPDATE SLOPE
+    fParticle->setLastInclination(difference);
+    
+    
+    
+    
+    //ofVec2f finalForce = ofVec2f(0,0);
+    return finalForce;
 }
 
 

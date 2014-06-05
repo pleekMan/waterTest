@@ -60,7 +60,7 @@ void ParticleSystem::updateAndDraw(const msa::fluid::Solver &solver, ofVec2f win
 	for(int i=0; i<MAX_PARTICLES; i++) {
 		if(particles[i].alpha > 0) {
 			particles[i].update(solver, windowSize, invWindowSize);
-			particles[i].updateVertexArrays(drawingFluid, invWindowSize, i, posArray, colArray);
+			//particles[i].updateVertexArrays(drawingFluid, invWindowSize, i, posArray, colArray);
             
             billboards.getVertices()[i] = particles[i].pos;
             billboards.setNormal(i,ofVec3f(1,0,0));

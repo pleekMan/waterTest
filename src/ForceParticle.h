@@ -20,15 +20,26 @@ public:
     
     ForceParticle(){};
     
-    ofVec2f	pos, vel;
+    ofVec2f	pos, vel, previousPos;
+    ofVec2f constantVel;
+    ofVec2f constantPosY;
+    
+    int inclination;
+
 	
     void setup(ofVec2f initPos, ofVec2f initVel);
     void update();
+    void update(ofVec2f _force);
     void render();
     
     ofVec2f getPosition();
+    float getConstantPosY();
+    ofVec2f getPreviousPos();
     ofVec2f getVelocity();
     ofVec2f getField(ofVec2f position);
+    
+    void setLastInclination(int _inclination);
+    int getLastInclination();
     
     float noiseTime;
 };

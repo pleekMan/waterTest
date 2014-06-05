@@ -63,7 +63,11 @@ public:
 private:
     
     ofVec2f getField(ofVec2f position);
+    float getForceFromDepthMap(ofImage *depthMap, ForceParticle *fParticle);
+
     void drawNoiseField();
+    
+    ofImage depthMap;
     
     //------
     float phase;

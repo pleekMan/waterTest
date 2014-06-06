@@ -106,7 +106,7 @@ void ParticleSystem::updateAndDraw(const msa::fluid::Solver &solver, ofVec2f win
     
     ofEnablePointSprites(); // not needed for GL3/4
     
-    glPointSize(10);
+    glPointSize(15);
 
 	particleTexture.getTextureReference().bind();
 	

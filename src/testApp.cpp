@@ -181,11 +181,11 @@ void testApp::update(){
 }
 
 void testApp::draw(){
-    ofBackground(0);
+    //ofBackground(0);
     //ofSetColor(255);
     //depthMap.draw(0, 0);
-    //ofSetColor(0,0,0, 20);
-    //ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+    ofSetColor(0,0,0, 50);
+    ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
     /*
      if(drawFluid) {
      ofClear(0);
@@ -212,7 +212,8 @@ void testApp::draw(){
     //-------------
     
     for (int i=0; i<forceParticles.size(); i++) {
-        forceParticles[i].render();
+        
+        //forceParticles[i].render();
         
         if(i == 100){
             ofFill();
@@ -284,6 +285,7 @@ void testApp::drawNoiseField(){
 float testApp::getForceFromDepthMap(ofImage *depthMap, ForceParticle *fParticle){
     
     int fParticleX = (int)fParticle->getPosition().x;
+    fParticleX = ofClamp(fParticleX, 0, ofGetWindowWidth());
     int fParticleY = (int)fParticle->getConstantPosY(); // TO ALWAYS GRAB THE SAME PIXEL.Y
     
     // GET BRIGHTNESS FROM PX AND THE ONE BELOW

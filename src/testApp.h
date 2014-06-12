@@ -1,11 +1,12 @@
 #pragma once
 
-#include "MSAFluid.h"
+//#include "MSAFluid.h"
 //#include "MSATimer.h"
-#include "ParticleSystem.h"
+//#include "ParticleSystem.h"
 
 #include "ofMain.h"
-#include "ForceParticle.h"
+//#include "ForceParticle.h"
+#include "WaterManager.h"
 
 // comment this line out if you don't wanna use TUIO
 // you will need ofxTUIO & ofxOsc
@@ -42,44 +43,14 @@ public:
 	void addToFluid(ofVec2f pos, ofVec2f vel, bool addColor, bool addForce);
     
 
-    
-    
-    float                   colorMult;
-    float                   velocityMult;
-	int                     fluidCellsX;
-	bool                    resizeFluid;
-	bool                    drawFluid;
-	bool                    drawParticles;
-	
-	msa::fluid::Solver      fluidSolver;
-	msa::fluid::DrawerGl	fluidDrawer;
-	
-	ParticleSystem          particleSystem;
-	
-	ofVec2f                 pMouse;
-    
-    vector<ForceParticle> forceParticles;
+    WaterManager waterManager;
+
     
 private:
     
-    ofVec2f getField(ofVec2f position);
-    float getForceFromDepthMap(ofImage *depthMap, ForceParticle *fParticle);
-
-    void drawNoiseField();
+    ofFbo drawLayer;
+    ofFbo maskLayer;
     
-    ofImage depthMap;
-    
-    //------
-    float phase;
-    float t;
-    float complexity;
-    //------
-
-    
-	
-#ifdef USE_TUIO
-	ofxTuioClient tuioClient;
-#endif	
 	
 };
 

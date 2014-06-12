@@ -16,6 +16,7 @@
 		49073C5C875B61F6D54CF6AB /* ofxSimpleGuiQuadWarp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39B743BE64C2FC3FC8C22163 /* ofxSimpleGuiQuadWarp.cpp */; };
 		495E773E470FF7C742646E77 /* ofxSimpleGuiContent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD862AFB8EFF69D2B30A7293 /* ofxSimpleGuiContent.cpp */; };
 		49890708C36FA822FC58A60B /* ofxSimpleGuiFPSCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C4855735366AEC807A7CF36 /* ofxSimpleGuiFPSCounter.cpp */; };
+		4A4175FA194211B100C1026F /* WaterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A4175F8194211B100C1026F /* WaterManager.cpp */; };
 		4A87604819377442009C63F3 /* ForceParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A87604619377442009C63F3 /* ForceParticle.cpp */; };
 		5A4349E9754D6FA14C0F2A3A /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC5DA1C87211D4F6377DA719 /* tinyxmlparser.cpp */; };
 		5EB9303FA9B240750638AE7C /* MSAFluidSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA01DF76EA921C7DA7405D /* MSAFluidSolver.cpp */; };
@@ -111,6 +112,8 @@
 		434F6D1BD9D80BFFAFA18B09 /* ofxSimpleGuiConfig.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxSimpleGuiConfig.cpp; path = ../../../addons/ofxSimpleGuiToo/src/ofxSimpleGuiConfig.cpp; sourceTree = SOURCE_ROOT; };
 		4436D71CE6442E6E1C783A2E /* MSAPhysics2D.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MSAPhysics2D.h; path = ../../../addons/ofxMSAPhysics/src/MSAPhysics2D.h; sourceTree = SOURCE_ROOT; };
 		4A2C7833E609686E9ECD8A8C /* ofxMSAInteractiveObject.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxMSAInteractiveObject.h; path = ../../../addons/ofxMSAInteractiveObject/src/ofxMSAInteractiveObject.h; sourceTree = SOURCE_ROOT; };
+		4A4175F8194211B100C1026F /* WaterManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaterManager.cpp; sourceTree = "<group>"; };
+		4A4175F9194211B100C1026F /* WaterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaterManager.h; sourceTree = "<group>"; };
 		4A87604619377442009C63F3 /* ForceParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForceParticle.cpp; sourceTree = "<group>"; };
 		4A87604719377442009C63F3 /* ForceParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForceParticle.h; sourceTree = "<group>"; };
 		4D7C691C68BF261275355F84 /* ofxSimpleGuiPage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxSimpleGuiPage.h; path = ../../../addons/ofxSimpleGuiToo/src/ofxSimpleGuiPage.h; sourceTree = SOURCE_ROOT; };
@@ -467,6 +470,8 @@
 				2D129AB0F7D46B8DFCEADEDB /* testApp.h */,
 				4A87604619377442009C63F3 /* ForceParticle.cpp */,
 				4A87604719377442009C63F3 /* ForceParticle.h */,
+				4A4175F8194211B100C1026F /* WaterManager.cpp */,
+				4A4175F9194211B100C1026F /* WaterManager.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -587,6 +592,7 @@
 				2DD56BBC82953D6AE0A018BF /* ofxSimpleGuiComboBox.cpp in Sources */,
 				495E773E470FF7C742646E77 /* ofxSimpleGuiContent.cpp in Sources */,
 				49890708C36FA822FC58A60B /* ofxSimpleGuiFPSCounter.cpp in Sources */,
+				4A4175FA194211B100C1026F /* WaterManager.cpp in Sources */,
 				2C776D21A9559288B0F7AED9 /* ofxSimpleGuiMovieSlider.cpp in Sources */,
 				49073C5C875B61F6D54CF6AB /* ofxSimpleGuiQuadWarp.cpp in Sources */,
 				76F1472575BCCA088FE3454B /* ofxSimpleGuiSlider2d.cpp in Sources */,

@@ -53,7 +53,7 @@ void ParticleSystem::updateAndDraw(const msa::fluid::Solver &solver, ofVec2f win
 
 	glEnable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
-    glBlendFunc(GL_ONE,GL_ONE);
+    //glBlendFunc(GL_ONE,GL_ONE);
 //	glEnable(GL_LINE_SMOOTH);
     ofSetLineWidth(1);
 	

@@ -53,9 +53,11 @@ void Particle::update( const msa::fluid::Solver &solver, const ofVec2f &windowSi
 //	}
 	
 	// fade out a bit (and kill if alpha == 0);
+    
 	alpha *= 0.999f;
 	if( alpha < 0.01f )
 		alpha = 0;
+     
 }
 
 
@@ -87,7 +89,7 @@ void Particle::updateVertexArrays( bool drawingFluid, const ofVec2f &invWindowSi
 		satInc *= satInc * satInc * satInc;
 		ofColor color;
 		//color.setHsb(0, v2 * 255.0f / ( VMAX * VMAX ) + satInc, ofLerp(0.5, 1, mass) * alpha * 255.0f);
-        color.set(0, 0, 255);
+        color.set(0, 0, 255,10 );
 		
 		colBuffer[ci++] = color.r;
 		colBuffer[ci++] = color.g;

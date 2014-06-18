@@ -26,7 +26,7 @@ void Particle::update( const msa::fluid::Solver &solver, const ofVec2f &windowSi
 		return;
 	
 	vel = solver.getVelocityAtPos( pos * invWindowSize ) * (mass * FLUID_FORCE ) * windowSize + vel * MOMENTUM;
-	pos += vel;	
+	pos += vel;
 	
 	// bounce of edges
 	if( pos.x < 0 ) {
@@ -48,16 +48,16 @@ void Particle::update( const msa::fluid::Solver &solver, const ofVec2f &windowSi
 	}
 	
 	// hackish way to make particles glitter when the slow down a lot
-//	if( vel.squareLength() < 1 ) {
-//		vel += msa::Rand::randVec2f() * 0.5f;
-//	}
+    //	if( vel.squareLength() < 1 ) {
+    //		vel += msa::Rand::randVec2f() * 0.5f;
+    //	}
 	
 	// fade out a bit (and kill if alpha == 0);
     
 	alpha *= 0.999f;
 	if( alpha < 0.01f )
 		alpha = 0;
-     
+    
 }
 
 
@@ -72,12 +72,14 @@ void Particle::updateVertexArrays( bool drawingFluid, const ofVec2f &invWindowSi
 	int ci = i * 6;
 	if( drawingFluid ) {
 		// if drawing fluid, draw lines as black & white
+        
 		colBuffer[ci++] = alpha;
 		colBuffer[ci++] = alpha;
 		colBuffer[ci++] = alpha;
 		colBuffer[ci++] = alpha;
 		colBuffer[ci++] = alpha;
 		colBuffer[ci++] = alpha;
+
 	} else {
 		// otherwise, use color
 		float vxNorm = vel.x * invWindowSize.x;
@@ -88,7 +90,7 @@ void Particle::updateVertexArrays( bool drawingFluid, const ofVec2f &invWindowSi
 		float satInc = mass > 0.5 ? mass * mass * mass : 0;
 		satInc *= satInc * satInc * satInc;
 		ofColor color;
-		//color.setHsb(0, v2 * 255.0f / ( VMAX * VMAX ) + satInc, ofLerp(0.5, 1, mass) * alpha * 255.0f);
+		//color.setHsb(50, v2 * 255.0f / ( VMAX * VMAX ) + satInc, ofLerp(0.5, 1, mass) * alpha * 255.0f);
         color.set(0, 0, 255,10 );
 		
 		colBuffer[ci++] = color.r;

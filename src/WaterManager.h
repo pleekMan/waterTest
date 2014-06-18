@@ -17,7 +17,7 @@ class WaterManager {
     
 public:
 	void setup();
-	void update();
+	void update(float dt);
 	void render();
 	
 	void keyPressed  (int key);
@@ -44,14 +44,16 @@ public:
 	
 	ofVec2f                 pMouse;
     
+    ofVec2f spawnPosition;
     vector<ForceParticle> forceParticles;
-    vector<ForceParticle> forceParticles2;
 
     
 private:
     
     ofVec2f getForceFromNoiseField(ofVec2f position);
     float getForceFromDepthMap(ofImage *depthMap, ForceParticle *fParticle);
+    ofVec2f getForceFromDepthMapXY(ofImage *depthMap, ForceParticle *fParticle, int _id);
+
     
     void drawNoiseField();
     void drawForceParticles();

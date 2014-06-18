@@ -16,6 +16,10 @@
 		49073C5C875B61F6D54CF6AB /* ofxSimpleGuiQuadWarp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 39B743BE64C2FC3FC8C22163 /* ofxSimpleGuiQuadWarp.cpp */; };
 		495E773E470FF7C742646E77 /* ofxSimpleGuiContent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD862AFB8EFF69D2B30A7293 /* ofxSimpleGuiContent.cpp */; };
 		49890708C36FA822FC58A60B /* ofxSimpleGuiFPSCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C4855735366AEC807A7CF36 /* ofxSimpleGuiFPSCounter.cpp */; };
+		4A0DE29B1951F62F000A3880 /* ofxAnimatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0DE28D1951F62F000A3880 /* ofxAnimatable.cpp */; };
+		4A0DE29C1951F62F000A3880 /* ofxAnimatableFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0DE28F1951F62F000A3880 /* ofxAnimatableFloat.cpp */; };
+		4A0DE29D1951F62F000A3880 /* ofxAnimatableOfColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0DE2931951F62F000A3880 /* ofxAnimatableOfColor.cpp */; };
+		4A0DE29E1951F62F000A3880 /* ofxAnimatableOfPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0DE2951951F62F000A3880 /* ofxAnimatableOfPoint.cpp */; };
 		4A4175FA194211B100C1026F /* WaterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A4175F8194211B100C1026F /* WaterManager.cpp */; };
 		4A87604819377442009C63F3 /* ForceParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A87604619377442009C63F3 /* ForceParticle.cpp */; };
 		5A4349E9754D6FA14C0F2A3A /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC5DA1C87211D4F6377DA719 /* tinyxmlparser.cpp */; };
@@ -111,6 +115,16 @@
 		3E59C088BE3987D34ADEBA5F /* ofxSimpleGuiToo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxSimpleGuiToo.h; path = ../../../addons/ofxSimpleGuiToo/src/ofxSimpleGuiToo.h; sourceTree = SOURCE_ROOT; };
 		434F6D1BD9D80BFFAFA18B09 /* ofxSimpleGuiConfig.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxSimpleGuiConfig.cpp; path = ../../../addons/ofxSimpleGuiToo/src/ofxSimpleGuiConfig.cpp; sourceTree = SOURCE_ROOT; };
 		4436D71CE6442E6E1C783A2E /* MSAPhysics2D.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MSAPhysics2D.h; path = ../../../addons/ofxMSAPhysics/src/MSAPhysics2D.h; sourceTree = SOURCE_ROOT; };
+		4A0DE28D1951F62F000A3880 /* ofxAnimatable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatable.cpp; sourceTree = "<group>"; };
+		4A0DE28E1951F62F000A3880 /* ofxAnimatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAnimatable.h; sourceTree = "<group>"; };
+		4A0DE28F1951F62F000A3880 /* ofxAnimatableFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatableFloat.cpp; sourceTree = "<group>"; };
+		4A0DE2901951F62F000A3880 /* ofxAnimatableFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableFloat.h; sourceTree = "<group>"; };
+		4A0DE2911951F62F000A3880 /* ofxAnimatableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableObject.h; sourceTree = "<group>"; };
+		4A0DE2921951F62F000A3880 /* ofxAnimatableObjectMasked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableObjectMasked.h; sourceTree = "<group>"; };
+		4A0DE2931951F62F000A3880 /* ofxAnimatableOfColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatableOfColor.cpp; sourceTree = "<group>"; };
+		4A0DE2941951F62F000A3880 /* ofxAnimatableOfColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableOfColor.h; sourceTree = "<group>"; };
+		4A0DE2951951F62F000A3880 /* ofxAnimatableOfPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatableOfPoint.cpp; sourceTree = "<group>"; };
+		4A0DE2961951F62F000A3880 /* ofxAnimatableOfPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableOfPoint.h; sourceTree = "<group>"; };
 		4A2C7833E609686E9ECD8A8C /* ofxMSAInteractiveObject.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxMSAInteractiveObject.h; path = ../../../addons/ofxMSAInteractiveObject/src/ofxMSAInteractiveObject.h; sourceTree = SOURCE_ROOT; };
 		4A4175F8194211B100C1026F /* WaterManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaterManager.cpp; sourceTree = "<group>"; };
 		4A4175F9194211B100C1026F /* WaterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaterManager.h; sourceTree = "<group>"; };
@@ -334,6 +348,32 @@
 			name = src;
 			sourceTree = "<group>";
 		};
+		4A0DE27D1951F62F000A3880 /* ofxAnimatable */ = {
+			isa = PBXGroup;
+			children = (
+				4A0DE28C1951F62F000A3880 /* src */,
+			);
+			name = ofxAnimatable;
+			path = ../../../addons/ofxAnimatable;
+			sourceTree = "<group>";
+		};
+		4A0DE28C1951F62F000A3880 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				4A0DE28D1951F62F000A3880 /* ofxAnimatable.cpp */,
+				4A0DE28E1951F62F000A3880 /* ofxAnimatable.h */,
+				4A0DE28F1951F62F000A3880 /* ofxAnimatableFloat.cpp */,
+				4A0DE2901951F62F000A3880 /* ofxAnimatableFloat.h */,
+				4A0DE2911951F62F000A3880 /* ofxAnimatableObject.h */,
+				4A0DE2921951F62F000A3880 /* ofxAnimatableObjectMasked.h */,
+				4A0DE2931951F62F000A3880 /* ofxAnimatableOfColor.cpp */,
+				4A0DE2941951F62F000A3880 /* ofxAnimatableOfColor.h */,
+				4A0DE2951951F62F000A3880 /* ofxAnimatableOfPoint.cpp */,
+				4A0DE2961951F62F000A3880 /* ofxAnimatableOfPoint.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		6E54289412D2D94F45A05113 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -365,6 +405,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				4A0DE27D1951F62F000A3880 /* ofxAnimatable */,
 				F8790DCD2E062DF9AA47E810 /* ofxMSACore */,
 				D3F713A22A3C00BCDADCEBED /* ofxMSAFluid */,
 				BBB46ED124BAFF9F2EAD9484 /* ofxMSAPhysics */,
@@ -588,6 +629,7 @@
 				825FA11382B216421AC896A6 /* MSAFluidDrawerBase.cpp in Sources */,
 				5EB9303FA9B240750638AE7C /* MSAFluidSolver.cpp in Sources */,
 				A0B7F6A3EC34B4F84321385D /* ofxSimpleGuiButton.cpp in Sources */,
+				4A0DE29C1951F62F000A3880 /* ofxAnimatableFloat.cpp in Sources */,
 				E39BF54C7233C89A5BB42174 /* ofxSimpleGuiColorPicker.cpp in Sources */,
 				2DD56BBC82953D6AE0A018BF /* ofxSimpleGuiComboBox.cpp in Sources */,
 				495E773E470FF7C742646E77 /* ofxSimpleGuiContent.cpp in Sources */,
@@ -598,15 +640,18 @@
 				76F1472575BCCA088FE3454B /* ofxSimpleGuiSlider2d.cpp in Sources */,
 				CF142A7D9914B99E6E287052 /* ofxSimpleGuiTitle.cpp in Sources */,
 				3317B76EE9202B4C6482D15C /* ofxSimpleGuiToggle.cpp in Sources */,
+				4A0DE29D1951F62F000A3880 /* ofxAnimatableOfColor.cpp in Sources */,
 				06980FF65ED01AFE2BCAAD5E /* ofxSimpleGuiConfig.cpp in Sources */,
 				8CE60C8F4001811D5B27D0F8 /* ofxSimpleGuiControl.cpp in Sources */,
 				1F910DCF02326B0E25059352 /* ofxSimpleGuiPage.cpp in Sources */,
+				4A0DE29B1951F62F000A3880 /* ofxAnimatable.cpp in Sources */,
 				C2ED558D391BA9692D3BF705 /* ofxSimpleGuiToo.cpp in Sources */,
 				7F8D13CD42F89D3284829CF0 /* ofxSimpleGuiValueControl.cpp in Sources */,
 				D1395DD979998DCFFA40ACAC /* ofxMSAInteractiveObject.cpp in Sources */,
 				63B57AC5BF4EF088491E0317 /* ofxXmlSettings.cpp in Sources */,
 				933A2227713C720CEFF80FD9 /* tinyxml.cpp in Sources */,
 				4A87604819377442009C63F3 /* ForceParticle.cpp in Sources */,
+				4A0DE29E1951F62F000A3880 /* ofxAnimatableOfPoint.cpp in Sources */,
 				9D44DC88EF9E7991B4A09951 /* tinyxmlerror.cpp in Sources */,
 				5A4349E9754D6FA14C0F2A3A /* tinyxmlparser.cpp in Sources */,
 			);

@@ -7,6 +7,7 @@
 //
 #include "WaterManager.h"
 
+
 //--------------------------------------------------------------
 void WaterManager::setup() {
 	
@@ -29,32 +30,29 @@ void WaterManager::setup() {
     initGUI();
     
     
+    spawnPosition = ofVec2f(0,350);
+    ofVec2f targetPosition = ofVec2f(580,734);
+    ofVec2f spawnPositionOffsetMax = ofVec2f(160,0);
     //-------------
     // FORCE PARTICLES - BOTTOM
     int separation = 30;
-    for (int y=600; y < ofGetWindowHeight(); y+= separation) {
+    for (int y=100; y < ofGetWindowHeight(); y+= separation) {
         for (int x=0; x < ofGetWindowWidth(); x+= separation) {
+            
             ForceParticle fParticle = ForceParticle();
-            fParticle.setup(ofVec2f(x,y));
+            
+            ofVec2f offset = ofVec2f(ofRandom(spawnPositionOffsetMax.x),0);
+            
+            fParticle.setup(offset, "test.path");
+            
+            fParticle.setPathOrigin(spawnPosition);
+            fParticle.setPathTarget(targetPosition);
             fParticle.setConstantVelocity(ofVec2f(3,0));
-            fParticle.setBoundaries(600, ofGetWindowHeight(), 0, ofGetWindowWidth());
+            fParticle.setBoundaries(spawnPosition.y, targetPosition.y, spawnPosition.x,targetPosition.x);
             forceParticles.push_back(fParticle);
         }
     }
     
-    // FORCE PARTICLES - RIGHT
-    //separation = 30;
-    for (int y=400; y < ofGetWindowHeight(); y+= separation) {
-        for (int x=0; x < 400; x+= separation) {
-            ForceParticle fParticle = ForceParticle();
-            fParticle.setup(ofVec2f(x,y));
-            fParticle.setConstantVelocity(ofVec2f(0,3));
-            fParticle.setBoundaries(400, ofGetWindowHeight(), 0, 400);
-            forceParticles2.push_back(fParticle);
-        }
-    }
-    
-    //-------------
     
     //------------ PERLIN NOISE VARS
     t = ofRandom(3);
@@ -63,7 +61,7 @@ void WaterManager::setup() {
     phase = TWO_PI; // separate u-noise from v-noise
     
     depthMap.loadImage("depthMap.png");
-    waterBack.loadImage("riverBed.png");
+    waterBack.loadImage("maqueta1Back_1024x768.png");
     
     waterBuffer.allocate(ofGetWindowWidth(), ofGetWindowHeight(), GL_RGB);
     waterBuffer.begin();
@@ -72,7 +70,7 @@ void WaterManager::setup() {
 }
 
 
-void WaterManager::update(){
+void WaterManager::update(float dt){
 	if(resizeFluid) 	{
 		fluidSolver.setSize(fluidCellsX, fluidCellsX / msa::getWindowAspectRatio());
 		fluidDrawer.setup(&fluidSolver);
@@ -88,33 +86,19 @@ void WaterManager::update(){
         //ofVec2f forceAtField = getField(fParticlePos); // 0 -> 1
         //forceAtField = (forceAtField * 2) - 1; // transpose to -1 -> 1
         
-        float forceAtDepthMap = getForceFromDepthMap(&depthMap, &(forceParticles[i]));
+        //float forceAtDepthMap = getForceFromDepthMap(&depthMap, &(forceParticles[i]));
         
-        forceParticles[i].update(forceAtDepthMap);
+        ofVec2f forceAtDepthMap = getForceFromDepthMapXY(&depthMap, &(forceParticles[i]), i);
+        
+        
+        float strength = (depthMap.getColor(forceParticles[i].getConstantPos().x, forceParticles[i].getConstantPos().y).r) / 255.0;
+        forceParticles[i].updateXY(forceAtDepthMap, strength, dt);
+        
         
         
         ofVec2f eventPos = forceParticles[i].getPosition();
         ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
-        ofVec2f eventVel = forceParticles[i].getVelocity() * 4 / ofGetWindowSize();
-        addToFluid(eventNorm, eventVel, true, true);
-        
-    }
-    
-    // FORCE PARTICLES - RIGHT
-    //---
-    for (int i=0; i<forceParticles2.size(); i++) {
-        
-        //ofVec2f forceAtField = getField(fParticlePos); // 0 -> 1
-        //forceAtField = (forceAtField * 2) - 1; // transpose to -1 -> 1
-        
-        float forceAtDepthMap = getForceFromDepthMap(&depthMap, &(forceParticles[i]));
-        
-        forceParticles2[i].update(forceAtDepthMap);
-        
-        
-        ofVec2f eventPos = forceParticles2[i].getPosition();
-        ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
-        ofVec2f eventVel = forceParticles2[i].getVelocity() * 4 / ofGetWindowSize();
+        ofVec2f eventVel = forceParticles[i].getVelocity() / ofGetWindowSize();
         addToFluid(eventNorm, eventVel, true, true);
         
     }
@@ -128,12 +112,12 @@ void WaterManager::update(){
     //-----------------------------
     //- WATER BUFFER DRAW - BEGIN
     waterBuffer.begin();
-    
-    //ofBackground(0);
-    ofSetColor(255);
+    ofClear(127, 127, 127,0);
+    //ofSetColor(255);
+    //depthMap.draw(0,0);
     waterBack.draw(0, 0);
-    //ofSetColor(0,0,0, 50);
-    //ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+    
+    
     /*
      if(drawFluid) {
      ofClear(0);
@@ -144,9 +128,13 @@ void WaterManager::update(){
      fadeToColor(0, 0, 0, 0.05);
      }
      */
+    
+    
 	if(drawParticles){
 		particleSystem.updateAndDraw(fluidSolver, ofGetWindowSize(), drawFluid);
 	}
+    
+    
     //ofDrawBitmapString(ofToString(fluidSolver.getAvgSpeed()), 20, 20);
     
     
@@ -166,18 +154,18 @@ void WaterManager::update(){
 #ifdef USE_GUI
 	gui.draw();
 #endif
-
+    
     
     waterBuffer.end();
     
     //- WATER BUFFER DRAW - END
     //-----------------------------
-
+    
     
 }
 
 void WaterManager::render(){
-    ofSetColor(255);
+    //ofSetColor(255);
     waterBuffer.draw(0,0);
 }
 
@@ -237,16 +225,25 @@ float WaterManager::getForceFromDepthMap(ofImage *depthMap, ForceParticle *fPart
     float pxBrightness;
     float nextPxBrightness;
     
+    //ofVec2f rotated = fParticle->getVelocity().normalized() * 1.4143;
+    //rotated.rotate(90);
+    
+    
     if (fParticle->isFlowVertical()) {
+        
+        
         fParticleX = (int)fParticle->getConstantPos().x; // TO ALWAYS GRAB THE SAME PIXEL.X
         fParticleX = ofClamp(fParticleX, 0, ofGetWindowWidth());
         fParticleY = (int)fParticle->getPosition().y;
         
-        cout << ofToString(fParticleX) + " : " + ofToString(fParticleY) << endl;
+        //cout << ofToString(fParticleX) + " : " + ofToString(fParticleY) << endl;
         
         // GET BRIGHTNESS FROM PX AND THE ONE NEXT TO IT
         pxBrightness = depthMap->getColor(fParticleX, fParticleY).r; // IS WHITE, ANYWAY...
         nextPxBrightness = depthMap->getColor(fParticleX + 1, fParticleY).r;
+        
+        
+        
     } else {
         fParticleX = (int)fParticle->getPosition().x;
         fParticleX = ofClamp(fParticleX, 0, ofGetWindowWidth());
@@ -282,30 +279,139 @@ float WaterManager::getForceFromDepthMap(ofImage *depthMap, ForceParticle *fPart
     return finalForce;
 }
 
+ofVec2f WaterManager::getForceFromDepthMapXY(ofImage *depthMap, ForceParticle *fParticle, int _id){
+    
+    
+    int fParticleX = (int)fParticle->getConstantPos().x;
+    int fParticleY = (int)fParticle->getConstantPos().y;
+    float pxBrightness;
+    float nextPxBrightness;
+    
+    ofVec2f finalForce;
+    
+    pxBrightness = depthMap->getColor(fParticleX, fParticleY).r; // IS WHITE, ANYWAY...
+    
+    // FOR X
+    
+    nextPxBrightness = depthMap->getColor(fParticleX + 1, fParticleY).r;
+    
+    float forceX = (nextPxBrightness / 255.0) - (pxBrightness / 255.0);
+    forceX *= -1;
+
+    // GET SLOPE (INCLINATION)
+    int difference = nextPxBrightness - pxBrightness;
+    
+    // IF PIXELS ARE THE SAME, USE LAST SLOPE
+    if (difference == 0) {
+       // forceX = fParticle->getForceApplied().x;
+    }
+    
+    // CORRECT DIRECTION OF SLOPE
+    if (difference < 0.) {
+        //forceX *= -1;
+    }
+    
+    finalForce.x = forceX;
+    
+    
+    
+    
+    // UPDATE SLOPE
+    //fParticle->setLastInclination(difference);
+    
+    
+    
+    //---- FOR Y
+    
+    nextPxBrightness = depthMap->getColor(fParticleX, fParticleY + 1).r;
+    
+    float forceY = (nextPxBrightness / 255.0) - (pxBrightness / 255.0);
+    
+    forceY *= -1;
+
+    // GET SLOPE (INCLINATION)
+    difference = nextPxBrightness - pxBrightness;
+    
+    // IF PIXELS ARE THE SAME, USE LAST SLOPE
+    if (difference == 0) {
+       //forceY = fParticle->getForceApplied().y;
+    }
+    
+    // CORRECT DIRECTION OF SLOPE
+    if (difference > 0.) {
+        //forceY *= -1;
+    }
+    
+    finalForce.y = forceY;
+    
+    // UPDATE SLOPE
+    //fParticle->setLastInclinationXY(finalForce);
+    
+    if (_id == 50) {
+        //ofSetColor(255);
+        //ofFill();
+        //ofCircle(fParticleX, fParticleY, 30);
+        //ofDrawBitmapString(" MMMMMMM ", fParticleX, fParticleY);
+        //cout << "F.x: " << ofToString(fParticle->getForceApplied().x) << " / F.y: " << ofToString(fParticle->getForceApplied().y) << endl;
+    }
+    
+    /*
+    if(_id == 50){
+        cout << "ForceX : " << ofToString(finalForce.x) << " / px : " << ofToString(pxBrightness) << " / nextPx : " << ofToString(nextPxBrightness )<< endl;
+    }
+     */
+    
+    //ofVec2f finalForce = ofVec2f(0,0);
+    return finalForce;
+    
+    //ofVec2f rotated = fParticle->getVelocity().normalized() * 1.4143;
+    //rotated.rotate(90);
+    
+    /*
+     if (fParticle->isFlowVertical()) {
+     
+     
+     //fParticleX = (int)fParticle->getConstantPos().x; // TO ALWAYS GRAB THE SAME PIXEL.X
+     fParticleX = ofClamp(fParticleX, 0, ofGetWindowWidth());
+     fParticleY = (int)fParticle->getPosition().y;
+     
+     cout << ofToString(fParticleX) + " : " + ofToString(fParticleY) << endl;
+     
+     // GET BRIGHTNESS FROM PX AND THE ONE NEXT TO IT
+     pxBrightness = depthMap->getColor(fParticleX, fParticleY).r; // IS WHITE, ANYWAY...
+     nextPxBrightness = depthMap->getColor(fParticleX + 1, fParticleY).r;
+     
+     
+     
+     } else {
+     fParticleX = (int)fParticle->getPosition().x;
+     fParticleX = ofClamp(fParticleX, 0, ofGetWindowWidth());
+     fParticleY = (int)fParticle->getConstantPos().y; // TO ALWAYS GRAB THE SAME PIXEL.Y
+     
+     // GET BRIGHTNESS FROM PX AND THE ONE BELOW
+     pxBrightness = depthMap->getColor(fParticleX, fParticleY).r; // IS WHITE, ANYWAY...
+     nextPxBrightness = depthMap->getColor(fParticleX, fParticleY + 1).r;
+     }
+     */
+    
+    
+}
+
 void WaterManager::drawForceParticles(){
     
     for (int i=0; i<forceParticles.size(); i++) {
         
         forceParticles[i].render();
-        /*
-        if(i == 100){
-            ofFill();
-            ofSetColor(0, 255, 0);
-            ofDrawBitmapString(ofToString(i) + " : " + ofToString(forceParticles[i].getVelocity()), forceParticles[i].getPosition());
-        }
-         */
-    }
-    
-    for (int i=0; i<forceParticles2.size(); i++) {
         
-        forceParticles2[i].render();
-        /*
-        if(i == 100){
-            ofFill();
+        if(i == 50){
+            ofNoFill();
             ofSetColor(0, 255, 0);
-            ofDrawBitmapString(ofToString(i) + " : " + ofToString(forceParticles[i].getVelocity()), forceParticles[i].getPosition());
+            ofVec2f fParticle = forceParticles[i].getConstantPos();
+            ofCircle(fParticle, 10);
+            ofLine(fParticle.x, fParticle.y, fParticle.x + (forceParticles[i].getForceAppliedMultiplied().x * 30), fParticle.y + (forceParticles[i].getForceAppliedMultiplied().y * 30));
+            //ofDrawBitmapString(ofToString(i) + " - " + ofToString(forceParticles[i].getForceApplied().x) + " : " + ofToString(forceParticles[i].getForceApplied().y), fParticle.x,fParticle.y);
         }
-         */
+        
     }
     
 }
@@ -383,17 +489,17 @@ void WaterManager::mouseMoved(int x, int y){
     ofVec2f mouseVel = ofVec2f(eventPos - pMouse) * 200 / ofGetWindowSize();
     mouseVel.x = ofClamp(mouseVel.x, -3, 3);
     mouseVel.y = ofClamp(mouseVel.y, -3, 3);
-
-    cout << "mouseVel: " + ofToString(mouseVel) << endl;
+    
+    //cout << "mouseVel: " + ofToString(mouseVel) << endl;
     addToFluid(mouseNorm, mouseVel, true, true);
     pMouse = eventPos;
     
     /*
-    ofVec2f eventPos = ofVec2f(x, y);
-    ofVec2f mouseNorm = ofVec2f(eventPos) / ofGetWindowSize();
-    ofVec2f mouseVel = ofVec2f(eventPos - pMouse) / ofGetWindowSize();
-    addToFluid(mouseNorm, mouseVel, true, true);
-    pMouse = eventPos;
+     ofVec2f eventPos = ofVec2f(x, y);
+     ofVec2f mouseNorm = ofVec2f(eventPos) / ofGetWindowSize();
+     ofVec2f mouseVel = ofVec2f(eventPos - pMouse) / ofGetWindowSize();
+     addToFluid(mouseNorm, mouseVel, true, true);
+     pMouse = eventPos;
      */
     
 }

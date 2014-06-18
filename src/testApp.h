@@ -50,6 +50,10 @@ private:
     
     ofFbo drawLayer;
     ofFbo maskLayer;
+    ofShader maskShader;
+    ofFbo finalLayer;
+    
+    float time;
     
 	
 };

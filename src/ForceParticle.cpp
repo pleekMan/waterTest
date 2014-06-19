@@ -9,8 +9,8 @@
 #include "ForceParticle.h"
 
 #define K 2.
-#define MASS 5.
-#define DAMPING 3.
+#define MASS 2.
+#define DAMPING 5.
 #define VEL_MAX 200.
 
 void ForceParticle::setup(ofVec2f _initPos, string _constantPath){
@@ -18,7 +18,7 @@ void ForceParticle::setup(ofVec2f _initPos, string _constantPath){
     constantPath.loadPath(_constantPath);
     constantPath.setUsePath(true);
     constantPath.setPosition(ofPoint(0,0));
-    constantPath.setDuration(ofRandom(5, 7));
+    constantPath.setDuration(ofRandom(10, 20));
     constantPath.animateTo(ofPoint(ofGetWindowWidth(), ofGetWindowHeight() - 200));
     
     initPos = _initPos;
@@ -105,7 +105,7 @@ void ForceParticle::updateXY(ofVec2f _force, float strength, float dt){
     constantPath.update(dt);
     
     externalForce = _force;
-    forceMultiplier = strength * 100000;
+    forceMultiplier = strength * 30000;
     //----------------
     
     //float accel = dangle - angle;
@@ -128,6 +128,8 @@ void ForceParticle::updateXY(ofVec2f _force, float strength, float dt){
     previousPos = pos;
     
     if (pos.x > boundary.right - 10 || pos.y >= boundary.bottom - 10) {
+    //if (pos.x > boundary.right - 5) {
+    //if(constantPath.getPercentDone() > 0.95){
         constantPath.setPosition(pathOrigin);
         constantPath.animateTo(pathTarget);
         previousPos = initPos;
@@ -139,8 +141,15 @@ void ForceParticle::updateXY(ofVec2f _force, float strength, float dt){
 void ForceParticle::render(){
     
     //ofSetColor(0,255,0);
-    ofSetColor(0,220,220);
+    ofSetColor(color);
     ofCircle(pos, 2);
+    
+    ofSetColor(color);
+    ofCircle(pathTarget, 10);
+    //ofSetColor(color);
+    ofLine(pathOrigin, pathTarget);
+    //ofSetColor(255, 0, 0);
+    ofCircle(pathOrigin, 10);
     
 }
 
@@ -180,6 +189,10 @@ void ForceParticle::setPathOrigin(ofVec2f _pathOrigin){
 
 void ForceParticle::setPathTarget(ofVec2f _pathTarget){
     pathTarget = _pathTarget;
+}
+
+void ForceParticle::setColor(ofColor _color){
+    color = _color;
 }
 
 void ForceParticle::setLastInclination(int _inclination){

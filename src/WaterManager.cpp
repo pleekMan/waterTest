@@ -29,39 +29,89 @@ void WaterManager::setup() {
 	//  THE  GUI NEEDS TO BE INITIALIZED IN ORDER TO INIT/UPDATE NECESSARY VARS FOR PARTICLE VIZ
     initGUI();
     
+    ofVec2f spawnPosition = ofVec2f(300,500);
+    ofVec2f spawnPosition1 = ofVec2f(20,500);
     
-    spawnPosition = ofVec2f(0,350);
-    ofVec2f targetPosition = ofVec2f(580,734);
-    ofVec2f spawnPositionOffsetMax = ofVec2f(160,0);
+    ofVec2f targetPosition = ofVec2f(1330,1024);
+    ofVec2f targetPosition1 = ofVec2f(1120, 1030);
+    ofVec2f spawnPositionOffsetMax = ofVec2f(270,0);
+    
     //-------------
-    // FORCE PARTICLES - BOTTOM
-    int separation = 30;
-    for (int y=100; y < ofGetWindowHeight(); y+= separation) {
-        for (int x=0; x < ofGetWindowWidth(); x+= separation) {
-            
+    // FORCE PARTICLES INIT - BEGIN
+    
+    //  RIVER FORCES
+    int particleCount = 1000;
+    for (int i=100; i < particleCount; i++) {
+        
             ForceParticle fParticle = ForceParticle();
             
-            ofVec2f offset = ofVec2f(ofRandom(spawnPositionOffsetMax.x),0);
+            ofVec2f offset;
+            ofVec2f actualSpawnPos;
+            ofVec2f actualTargetPos;
+            string pathUrl;
+            ofColor fColor;
             
-            fParticle.setup(offset, "test.path");
+            if(forceParticles.size() % 2 == 0){
+                actualSpawnPos = spawnPosition;
+                actualTargetPos = targetPosition;
+                offset = ofVec2f(ofRandom(-spawnPositionOffsetMax.x),0);
+                pathUrl = "riverPath_0.path";
+                fColor = ofColor(0,255, 255);
+                fParticle.setBoundaries(actualSpawnPos.y, actualTargetPos.y, actualSpawnPos.x,actualTargetPos.x);
+            } else {
+                actualSpawnPos = spawnPosition1;
+                actualTargetPos = targetPosition1;
+                offset = ofVec2f(ofRandom(spawnPositionOffsetMax.x),0);
+                pathUrl = "riverPath_1.path";
+                fColor = ofColor(255,0, 255);
+                fParticle.setBoundaries(actualSpawnPos.y, actualTargetPos.y, actualSpawnPos.x,actualTargetPos.x);
+            }
             
-            fParticle.setPathOrigin(spawnPosition);
-            fParticle.setPathTarget(targetPosition);
-            fParticle.setConstantVelocity(ofVec2f(3,0));
-            fParticle.setBoundaries(spawnPosition.y, targetPosition.y, spawnPosition.x,targetPosition.x);
+            fParticle.setup(offset, pathUrl );
+            fParticle.setPathOrigin(actualSpawnPos);
+            fParticle.setPathTarget(actualTargetPos);
+            // fParticle.setConstantVelocity(ofVec2f(3,0));
+            fParticle.setColor(fColor);
             forceParticles.push_back(fParticle);
-        }
+        
+    }
+    
+    // DAM
+    particleCount = 500;
+    for (int i=100; i < particleCount; i++) {
+        
+        ForceParticle fParticle = ForceParticle();
+        
+        ofVec2f actualSpawnPos = ofVec2f(20,0);
+        ofVec2f offset = ofVec2f(ofRandom(250,0));
+        ofVec2f actualTargetPos = ofVec2f(20,0);
+        string pathUrl = "riverDam.path";
+        ofColor fColor = ofColor(0,0,250);
+        
+        fParticle.setup(offset, pathUrl );
+        fParticle.setPathOrigin(actualSpawnPos);
+        fParticle.setPathTarget(actualTargetPos);
+        fParticle.setBoundaries(actualSpawnPos.y, actualTargetPos.y, actualSpawnPos.x,actualTargetPos.x);
+
+        forceParticlesDam.push_back(fParticle);
+
     }
     
     
-    //------------ PERLIN NOISE VARS
-    t = ofRandom(3);
-    complexity = 3; // NOISE SCALE
-    //timeSpeed = .005; // MOTION SPEED
-    phase = TWO_PI; // separate u-noise from v-noise
     
-    depthMap.loadImage("depthMap.png");
-    waterBack.loadImage("maqueta1Back_1024x768.png");
+    
+    // FORCE PARTICLES INIT - END
+
+    
+    
+    //------------ PERLIN NOISE VARS
+    //t = ofRandom(3);
+    //complexity = 3; // NOISE SCALE
+    //timeSpeed = .005; // MOTION SPEED
+    //phase = TWO_PI; // separate u-noise from v-noise
+    
+    depthMap.loadImage("maqueta_depthMap.png");
+    waterBack.loadImage("maqueta1Back.png");
     
     waterBuffer.allocate(ofGetWindowWidth(), ofGetWindowHeight(), GL_RGB);
     waterBuffer.begin();
@@ -79,7 +129,7 @@ void WaterManager::update(float dt){
     
     //----------------
     
-    // FORCE PARTICLES - BOTTOM
+    // FORCE PARTICLES - RIVER
     //---
     for (int i=0; i<forceParticles.size(); i++) {
         
@@ -99,6 +149,23 @@ void WaterManager::update(float dt){
         ofVec2f eventPos = forceParticles[i].getPosition();
         ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
         ofVec2f eventVel = forceParticles[i].getVelocity() / ofGetWindowSize();
+        addToFluid(eventNorm, eventVel, true, true);
+        
+    }
+    
+    // FORCE PARTICLES - DAM
+    
+    for (int i=0; i<forceParticlesDam.size(); i++) {
+        
+        ofVec2f forceAtDepthMap = getForceFromDepthMapXY(&depthMap, &(forceParticlesDam[i]), i);
+        
+        float strength = (depthMap.getColor(forceParticlesDam[i].getConstantPos().x, forceParticlesDam[i].getConstantPos().y).r) / 255.0;
+        forceParticlesDam[i].updateXY(forceAtDepthMap, strength, dt);
+        
+        
+        ofVec2f eventPos = forceParticlesDam[i].getPosition();
+        ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
+        ofVec2f eventVel = forceParticlesDam[i].getVelocity() / ofGetWindowSize();
         addToFluid(eventNorm, eventVel, true, true);
         
     }
@@ -297,13 +364,13 @@ ofVec2f WaterManager::getForceFromDepthMapXY(ofImage *depthMap, ForceParticle *f
     
     float forceX = (nextPxBrightness / 255.0) - (pxBrightness / 255.0);
     forceX *= -1;
-
+    
     // GET SLOPE (INCLINATION)
     int difference = nextPxBrightness - pxBrightness;
     
     // IF PIXELS ARE THE SAME, USE LAST SLOPE
     if (difference == 0) {
-       // forceX = fParticle->getForceApplied().x;
+        // forceX = fParticle->getForceApplied().x;
     }
     
     // CORRECT DIRECTION OF SLOPE
@@ -328,13 +395,13 @@ ofVec2f WaterManager::getForceFromDepthMapXY(ofImage *depthMap, ForceParticle *f
     float forceY = (nextPxBrightness / 255.0) - (pxBrightness / 255.0);
     
     forceY *= -1;
-
+    
     // GET SLOPE (INCLINATION)
     difference = nextPxBrightness - pxBrightness;
     
     // IF PIXELS ARE THE SAME, USE LAST SLOPE
     if (difference == 0) {
-       //forceY = fParticle->getForceApplied().y;
+        //forceY = fParticle->getForceApplied().y;
     }
     
     // CORRECT DIRECTION OF SLOPE
@@ -356,9 +423,9 @@ ofVec2f WaterManager::getForceFromDepthMapXY(ofImage *depthMap, ForceParticle *f
     }
     
     /*
-    if(_id == 50){
-        cout << "ForceX : " << ofToString(finalForce.x) << " / px : " << ofToString(pxBrightness) << " / nextPx : " << ofToString(nextPxBrightness )<< endl;
-    }
+     if(_id == 50){
+     cout << "ForceX : " << ofToString(finalForce.x) << " / px : " << ofToString(pxBrightness) << " / nextPx : " << ofToString(nextPxBrightness )<< endl;
+     }
      */
     
     //ofVec2f finalForce = ofVec2f(0,0);
@@ -403,6 +470,7 @@ void WaterManager::drawForceParticles(){
         
         forceParticles[i].render();
         
+        /*
         if(i == 50){
             ofNoFill();
             ofSetColor(0, 255, 0);
@@ -411,6 +479,14 @@ void WaterManager::drawForceParticles(){
             ofLine(fParticle.x, fParticle.y, fParticle.x + (forceParticles[i].getForceAppliedMultiplied().x * 30), fParticle.y + (forceParticles[i].getForceAppliedMultiplied().y * 30));
             //ofDrawBitmapString(ofToString(i) + " - " + ofToString(forceParticles[i].getForceApplied().x) + " : " + ofToString(forceParticles[i].getForceApplied().y), fParticle.x,fParticle.y);
         }
+         */
+        
+    }
+    
+    for (int i=0; i<forceParticlesDam.size(); i++) {
+        
+        forceParticlesDam[i].render();
+        
         
     }
     

@@ -65,6 +65,7 @@ void testApp::update(){
     
     // DRAWLAYER BEGIN: DRAWING ALL VISUALS HERE
     drawLayer.begin();
+    ofClear(255);
     ofSetColor(255);
     //ofSetColor(0,0,0, 50);
     //ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
@@ -106,15 +107,18 @@ void testApp::update(){
 void testApp::draw(){
     ofBackground(0);
     
+    ofSetColor(255);
     drawLayer.draw(0, 0);
     //maskLayer.draw(0,0);
     
     ofSetColor(255);
     //finalLayer.draw(0, 0);
     
-
-    ofDrawBitmapString("X: " + ofToString(ofGetMouseX()) + " / Y: " + ofToString(ofGetMouseY()), ofPoint(ofGetMouseX(),ofGetMouseY()));
     
+    ofPushStyle();
+    ofSetColor(0, 0, 255);
+    ofDrawBitmapString("X: " + ofToString(ofGetMouseX()) + " / Y: " + ofToString(ofGetMouseY()), ofPoint(ofGetMouseX(),ofGetMouseY()));
+    ofPopStyle();
 }
 
 

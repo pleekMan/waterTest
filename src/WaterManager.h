@@ -44,8 +44,8 @@ public:
 	
 	ofVec2f                 pMouse;
     
-    ofVec2f spawnPosition;
     vector<ForceParticle> forceParticles;
+    vector<ForceParticle> forceParticlesDam;
 
     
 private:

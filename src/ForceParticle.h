@@ -38,6 +38,7 @@ public:
     ofVec2f constantPos;
     ofVec2f externalForce;
     float forceMultiplier;
+    ofColor color;
     
     int inclination;
     bool isVertical;
@@ -54,6 +55,7 @@ public:
     void setBoundaries(int upper, int bottom, int left, int right);
     void setPathOrigin(ofVec2f _pathOrigin);
     void setPathTarget(ofVec2f _pathTarget);
+    void setColor(ofColor _color);
 
     
     ofVec2f getPosition();

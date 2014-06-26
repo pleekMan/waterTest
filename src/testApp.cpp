@@ -4,7 +4,7 @@
 //--------------------------------------------------------------
 void testApp::setup() {
     cout << "------------------------" << endl << "------------------------" << endl;
-
+    
     
     
     ofSetFrameRate(60);
@@ -13,15 +13,20 @@ void testApp::setup() {
     ofEnableAlphaBlending();
 	ofSetBackgroundAuto(false);
     
+    drawingEnabled = true;
+    
     time = ofGetElapsedTimef();
     
     windowResized(ofGetWidth(), ofGetHeight());		// force this at start (cos I don't think it is called)
+    
+    videoManager.setup("videos/");
+    
     waterManager.setup();
     
-    // INIT FBOs - BEGIN
+    // INIT FBOs - BEGIN --------------------
     drawLayer.allocate(ofGetWindowWidth(), ofGetWindowHeight());
     maskLayer.allocate(ofGetWindowWidth(), ofGetWindowHeight());
-    maskShader.load("maskShaderSimple");
+    maskShader.load("masker");
     finalLayer.allocate(ofGetWindowWidth(), ofGetWindowHeight());
     
     drawLayer.begin();
@@ -29,16 +34,29 @@ void testApp::setup() {
     drawLayer.end();
     
     maskLayer.begin();
-    ofClear(0,255);
+    ofClear(0);
     maskLayer.end();
     
     finalLayer.begin();
     ofClear(0,0);
     finalLayer.end();
     
-    // INIT FBOs - END
+    // INIT FBOs - END --------------------
     
-
+    // SYPHON - BEGIN --------------------
+    
+    //mainOutputSyphonServer.setName("ScreenOutput");
+	individualTextureSyphonServer.setName("ScreenOutput");
+    
+	//mClient.setup();
+    
+    //using Syphon app Simple Server, found at http://syphon.v002.info/
+    //mClient.set("","Simple Server");
+    
+    // SYPHON - END --------------------
+    
+    
+    cout << "------------------------" << endl << "------------------------" << endl;
     
 }
 
@@ -89,36 +107,44 @@ void testApp::update(){
     //maskShader.setUniform1f("nearThreshold", 0.9);
     //maskShader.setUniform1f("farThreshold", 0.1);
     
-    maskShader.setUniformTexture("backTex", drawLayer.getTextureReference(), 0);
-    maskShader.setUniformTexture("depthTex", maskLayer.getTextureReference(), 1);
+    maskShader.setUniformTexture("tex0", drawLayer.getTextureReference(), 0);
+    maskShader.setUniformTexture("maskTex", maskLayer.getTextureReference(), 1);
     
     //ofSetRectMode(OF_RECTMODE_CENTER);
-    ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
-    drawLayer.draw(0,0);
+    //drawLayer.draw(0,0);
+    //ofRect(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
     maskShader.end();
     
     finalLayer.end();
     
     // DRAWING THROUGH SHADER - END ----------------------
-
+    
+    individualTextureSyphonServer.publishTexture(&drawLayer.getTextureReference());
+    
     
 }
 
 void testApp::draw(){
     ofBackground(0);
+    ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
-    ofSetColor(255);
-    drawLayer.draw(0, 0);
-    //maskLayer.draw(0,0);
-    
-    ofSetColor(255);
-    //finalLayer.draw(0, 0);
-    
-    
-    ofPushStyle();
-    ofSetColor(0, 0, 255);
-    ofDrawBitmapString("X: " + ofToString(ofGetMouseX()) + " / Y: " + ofToString(ofGetMouseY()), ofPoint(ofGetMouseX(),ofGetMouseY()));
-    ofPopStyle();
+    if(drawingEnabled){
+        
+        ofSetColor(255);
+        drawLayer.draw(0, 0);
+        //maskLayer.draw(0,0);
+        
+        ofSetColor(255);
+        //finalLayer.draw(0, 0);
+        
+        //mClient.draw(0, 0);
+        //mainOutputSyphonServer.publishScreen();
+        
+        ofPushStyle();
+        ofSetColor(0, 0, 255);
+        ofDrawBitmapString("X: " + ofToString(ofGetMouseX()) + " / Y: " + ofToString(ofGetMouseY()), ofPoint(ofGetMouseX(),ofGetMouseY()));
+        ofPopStyle();
+    }
 }
 
 
@@ -160,6 +186,10 @@ void testApp::keyPressed  (int key){
 		case 'r':
 			waterManager.fluidSolver.reset();
 			break;
+            
+        case '0':
+			drawingEnabled = !drawingEnabled;
+			break;
 			
 		case 'b': {
             //			Timer timer;
@@ -181,14 +211,14 @@ void testApp::mouseMoved(int x, int y){
     waterManager.mouseMoved(x, y);
     
     /*
-    ofVec2f eventPos = ofVec2f(x, y);
-    ofVec2f eventPreviousPos = ofVec2f(ofGetPreviousMouseX(), ofGetPreviousMouseY());
-    ofVec2f mouseNorm = ofVec2f(eventPos) / ofGetWindowSize();
-    ofVec2f mouseVel = ofVec2f(eventPos - eventPreviousPos) * 100 / ofGetWindowSize();
-    cout << "mouseVel: " + ofToString(mouseVel) << endl;
-    waterManager.addToFluid(mouseNorm, mouseVel, true, true);
-    //eventPreviousPos = eventPos;
-    */
+     ofVec2f eventPos = ofVec2f(x, y);
+     ofVec2f eventPreviousPos = ofVec2f(ofGetPreviousMouseX(), ofGetPreviousMouseY());
+     ofVec2f mouseNorm = ofVec2f(eventPos) / ofGetWindowSize();
+     ofVec2f mouseVel = ofVec2f(eventPos - eventPreviousPos) * 100 / ofGetWindowSize();
+     cout << "mouseVel: " + ofToString(mouseVel) << endl;
+     waterManager.addToFluid(mouseNorm, mouseVel, true, true);
+     //eventPreviousPos = eventPos;
+     */
     
 }
 

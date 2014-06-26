@@ -19,6 +19,7 @@ void ForceParticle::setup(ofVec2f _initPos, string _constantPath){
     constantPath.setUsePath(true);
     constantPath.setPosition(ofPoint(0,0));
     constantPath.setDuration(ofRandom(10, 20));
+    constantPath.setCurve(QUADRATIC_EASE_IN);
     constantPath.animateTo(ofPoint(ofGetWindowWidth(), ofGetWindowHeight() - 200));
     
     initPos = _initPos;
@@ -127,9 +128,8 @@ void ForceParticle::updateXY(ofVec2f _force, float strength, float dt){
     vel = pos - previousPos;
     previousPos = pos;
     
-    if (pos.x > boundary.right - 10 || pos.y >= boundary.bottom - 10) {
-    //if (pos.x > boundary.right - 5) {
-    //if(constantPath.getPercentDone() > 0.95){
+    //if (pos.x > boundary.right - 10 || pos.y >= boundary.bottom - 10) {
+    if(constantPath.getPercentDone() > 0.95){
         constantPath.setPosition(pathOrigin);
         constantPath.animateTo(pathTarget);
         previousPos = initPos;

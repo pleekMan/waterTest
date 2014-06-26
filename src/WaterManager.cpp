@@ -40,8 +40,8 @@ void WaterManager::setup() {
     // FORCE PARTICLES INIT - BEGIN
     
     //  RIVER FORCES
-    int particleCount = 1000;
-    for (int i=100; i < particleCount; i++) {
+    int particleCount = 2000;
+    for (int i=0; i < particleCount; i++) {
         
             ForceParticle fParticle = ForceParticle();
             
@@ -51,7 +51,7 @@ void WaterManager::setup() {
             string pathUrl;
             ofColor fColor;
             
-            if(forceParticles.size() % 2 == 0){
+            if(i % 2 == 0){
                 actualSpawnPos = spawnPosition;
                 actualTargetPos = targetPosition;
                 offset = ofVec2f(ofRandom(-spawnPositionOffsetMax.x),0);
@@ -76,15 +76,15 @@ void WaterManager::setup() {
         
     }
     
-    // DAM
-    particleCount = 500;
-    for (int i=100; i < particleCount; i++) {
+    // DAM FORCES
+    particleCount = 1000;
+    for (int i=0; i < particleCount; i++) {
         
         ForceParticle fParticle = ForceParticle();
         
-        ofVec2f actualSpawnPos = ofVec2f(20,0);
-        ofVec2f offset = ofVec2f(ofRandom(250,0));
-        ofVec2f actualTargetPos = ofVec2f(20,0);
+        ofVec2f actualSpawnPos = ofVec2f(0,0);
+        ofVec2f offset = ofVec2f(ofRandom(380,0),0);
+        ofVec2f actualTargetPos = ofVec2f(0,400);
         string pathUrl = "riverDam.path";
         ofColor fColor = ofColor(0,0,250);
         
@@ -138,13 +138,16 @@ void WaterManager::update(float dt){
         
         //float forceAtDepthMap = getForceFromDepthMap(&depthMap, &(forceParticles[i]));
         
-        ofVec2f forceAtDepthMap = getForceFromDepthMapXY(&depthMap, &(forceParticles[i]), i);
-        
+        //ofVec2f forceAtDepthMap = getForceFromDepthMapXY(&depthMap, &(forceParticles[i]), i);
+        ofVec2f forceAtDepthMap = ofVec2f(0, 0);
+
         
         float strength = (depthMap.getColor(forceParticles[i].getConstantPos().x, forceParticles[i].getConstantPos().y).r) / 255.0;
         forceParticles[i].updateXY(forceAtDepthMap, strength, dt);
         
-        
+        //if (i == 20) {
+        //    cout <<  "% Path:  " + ofToString(forceParticles[i].constantPath.getPercentDone()) << endl;
+        //}
         
         ofVec2f eventPos = forceParticles[i].getPosition();
         ofVec2f eventNorm = ofVec2f(eventPos) / ofGetWindowSize();
@@ -157,10 +160,17 @@ void WaterManager::update(float dt){
     
     for (int i=0; i<forceParticlesDam.size(); i++) {
         
-        ofVec2f forceAtDepthMap = getForceFromDepthMapXY(&depthMap, &(forceParticlesDam[i]), i);
-        
+        //ofVec2f forceAtDepthMap = getForceFromDepthMapXY(&depthMap, &(forceParticlesDam[i]), i);
+        ofVec2f forceAtDepthMap = ofVec2f(0, 0);
+
         float strength = (depthMap.getColor(forceParticlesDam[i].getConstantPos().x, forceParticlesDam[i].getConstantPos().y).r) / 255.0;
         forceParticlesDam[i].updateXY(forceAtDepthMap, strength, dt);
+        
+        /*
+        if (i == 20) {
+            cout <<  "% Path:  " + ofToString(forceParticlesDam[i].constantPath.getPercentDone()) << endl;
+        }
+        */
         
         
         ofVec2f eventPos = forceParticlesDam[i].getPosition();
@@ -205,7 +215,7 @@ void WaterManager::update(float dt){
     //ofDrawBitmapString(ofToString(fluidSolver.getAvgSpeed()), 20, 20);
     
     
-    drawForceParticles();
+    //drawForceParticles();
     
     //-----------------
     //PERLIN NOISE
@@ -530,7 +540,7 @@ void WaterManager::initGUI(){
     gui.addSlider("fluidCellsX", fluidCellsX, 20, 400);
     gui.addButton("resizeFluid", resizeFluid);
     gui.addSlider("colorMult", colorMult, 0, 100);
-    gui.addSlider("velocityMult", velocityMult, 0, 100);
+    gui.addSlider("velocityMult", velocityMult, 0, 5);
     gui.addSlider("fs.viscocity", fluidSolver.viscocity, 0.0, 0.01);
     gui.addSlider("fs.colorDiffusion", fluidSolver.colorDiffusion, 0.0, 0.0003);
     gui.addSlider("fs.fadeSpeed", fluidSolver.fadeSpeed, 0.0, 0.1);

@@ -4,3 +4,7 @@ ofxMSAPhysics
 ofxSimpleGuiToo
 ofxMSAInteractiveObject
 ofxXmlSettings
+ofxSyphon
+ofxKinect
+ofxOpenCv
+ofxAnimatable

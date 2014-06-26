@@ -63,12 +63,15 @@ void Particle::update( const msa::fluid::Solver &solver, const ofVec2f &windowSi
 
 
 void Particle::updateVertexArrays( bool drawingFluid, const ofVec2f &invWindowSize, int i, float* posBuffer, float* colBuffer) {
-	int vi = i * 4;
+	
+    
+    int vi = i * 4;
 	posBuffer[vi++] = pos.x - vel.x;
 	posBuffer[vi++] = pos.y - vel.y;
 	posBuffer[vi++] = pos.x;
 	posBuffer[vi++] = pos.y;
 	
+    
 	int ci = i * 6;
 	if( drawingFluid ) {
 		// if drawing fluid, draw lines as black & white
@@ -91,8 +94,11 @@ void Particle::updateVertexArrays( bool drawingFluid, const ofVec2f &invWindowSi
 		satInc *= satInc * satInc * satInc;
 		ofColor color;
 		//color.setHsb(50, v2 * 255.0f / ( VMAX * VMAX ) + satInc, ofLerp(0.5, 1, mass) * alpha * 255.0f);
-        color.set(0, 60, 106,10 );
-		
+        color.set(0, 0, 255);
+		//color.setHsb(ofMap(ofGetMouseX(), 0, ofGetWindowWidth(), 0, 255),255,255);
+        
+        //cout << ofToString(ofMap(ofGetMouseX(), 0, ofGetWindowWidth(), 0, 255)) << endl;
+        
 		colBuffer[ci++] = color.r;
 		colBuffer[ci++] = color.g;
 		colBuffer[ci++] = color.b;
@@ -100,6 +106,20 @@ void Particle::updateVertexArrays( bool drawingFluid, const ofVec2f &invWindowSi
 		colBuffer[ci++] = color.g;
 		colBuffer[ci++] = color.b;
 	}
+     
+    
+    /*
+    ofColor color;
+    color.set(0, 127, 127);
+
+    int ci = i * 6;
+    colBuffer[ci++] = color.r;
+    colBuffer[ci++] = color.g;
+    colBuffer[ci++] = color.b;
+    colBuffer[ci++] = color.r;
+    colBuffer[ci++] = color.g;
+    colBuffer[ci++] = color.b;
+    */
 }
 
 ofVec2f Particle::getVelocity(){

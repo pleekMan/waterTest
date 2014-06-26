@@ -1,22 +1,12 @@
 #pragma once
 
-//#include "MSAFluid.h"
-//#include "MSATimer.h"
-//#include "ParticleSystem.h"
 
 #include "ofMain.h"
-//#include "ForceParticle.h"
 #include "WaterManager.h"
+#include "VideoManager.h"
+#include "ofxSyphon.h"
 
-// comment this line out if you don't wanna use TUIO
-// you will need ofxTUIO & ofxOsc
-//#define USE_TUIO
-
-// comment this line out if you don't wanna use the GUI
-// you will need ofxSimpleGuiToo, ofxMSAInteractiveObject & ofxXmlSettings
-// if you don't use the GUI, you won't be able to see the fluid parameters
 #define USE_GUI
-
 
 #ifdef USE_TUIO
 #include "ofxTuio.h"
@@ -42,8 +32,15 @@ public:
 	void fadeToColor(float r, float g, float b, float speed);
 	void addToFluid(ofVec2f pos, ofVec2f vel, bool addColor, bool addForce);
     
+    bool drawingEnabled;
 
     WaterManager waterManager;
+    VideoManager videoManager;
+    
+    ofxSyphonServer mainOutputSyphonServer;
+	ofxSyphonServer individualTextureSyphonServer;
+	
+	ofxSyphonClient mClient;
 
     
 private:
